@@ -665,6 +665,165 @@ body {
 #send-btn:disabled { opacity: .35; cursor: not-allowed; }
 
 /* ──────────────────────────────────
+   AGENT CONFIG MODAL
+────────────────────────────────── */
+#config-overlay {
+  display: none; position: fixed; inset: 0; z-index: 300;
+  background: rgba(17,24,39,.45); backdrop-filter: blur(8px);
+  align-items: center; justify-content: center; padding: 24px;
+  animation: fadeIn .15s ease;
+}
+#config-overlay.on { display: flex; }
+
+.config-panel {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: 22px; width: 100%; max-width: 560px;
+  box-shadow: var(--shadow-lg); overflow: hidden;
+  animation: slideUp .2s ease;
+}
+
+.config-header {
+  padding: 28px 28px 0;
+  display: flex; align-items: flex-start; justify-content: space-between;
+}
+
+.config-agent-tag {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+}
+
+.config-agent-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: var(--accent-lt); display: flex; align-items: center; justify-content: center;
+  border: 1.5px solid var(--accent-md);
+}
+
+.config-badge {
+  font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+  color: var(--accent); text-transform: uppercase;
+  background: var(--accent-lt); border: 1px solid var(--accent-md);
+  border-radius: 20px; padding: 3px 12px;
+}
+
+.config-title { font-size: 22px; font-weight: 800; color: var(--text); letter-spacing: -.5px; margin-bottom: 5px; }
+.config-desc  { font-size: 14px; color: var(--text2); line-height: 1.6; }
+
+.config-close {
+  background: var(--surface2); border: 1.5px solid var(--border);
+  border-radius: 9px; width: 34px; height: 34px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all .2s; flex-shrink: 0;
+  color: var(--text3);
+}
+.config-close:hover { background: var(--border); color: var(--text); }
+
+.config-body { padding: 20px 28px; max-height: 60vh; overflow-y: auto; }
+
+/* 옵션 섹션 */
+.opt-section { margin-bottom: 22px; }
+
+.opt-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 1.3px;
+  color: var(--text3); text-transform: uppercase;
+  margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
+}
+.opt-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* 라디오 버튼 그룹 */
+.opt-radio-group { display: flex; flex-direction: column; gap: 7px; }
+
+.opt-radio {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px; border-radius: 11px;
+  border: 1.5px solid var(--border); background: var(--surface);
+  cursor: pointer; transition: all .18s;
+}
+.opt-radio:hover { border-color: var(--accent-md); background: var(--accent-lt); }
+.opt-radio.selected { border-color: var(--accent); background: var(--accent-lt); }
+
+.opt-radio-dot {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid var(--border2); background: var(--surface);
+  flex-shrink: 0; transition: all .18s; display: flex; align-items: center; justify-content: center;
+}
+.opt-radio.selected .opt-radio-dot {
+  border-color: var(--accent); background: var(--accent);
+}
+.opt-radio.selected .opt-radio-dot::after {
+  content: ''; width: 6px; height: 6px; border-radius: 50%; background: #fff;
+}
+
+.opt-radio-info { flex: 1; }
+.opt-radio-name { font-size: 14px; font-weight: 600; color: var(--text); }
+.opt-radio.selected .opt-radio-name { color: var(--accent); }
+.opt-radio-sub  { font-size: 12px; color: var(--text3); margin-top: 2px; }
+
+.opt-radio-badge {
+  font-size: 11px; font-weight: 600; padding: 2px 9px;
+  border-radius: 20px; flex-shrink: 0;
+}
+.opt-radio-badge.danger  { background: var(--danger-lt);  color: var(--danger); }
+.opt-radio-badge.warn    { background: var(--warn-lt);    color: var(--warn); }
+.opt-radio-badge.success { background: var(--success-lt); color: var(--success); }
+
+/* 토글 체크박스 그룹 */
+.opt-toggle-group { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.opt-toggle {
+  padding: 8px 16px; border-radius: 22px;
+  border: 1.5px solid var(--border); background: var(--surface);
+  font-family: var(--sans); font-size: 13.5px; font-weight: 500;
+  color: var(--text2); cursor: pointer; transition: all .18s;
+}
+.opt-toggle:hover { border-color: var(--accent-md); color: var(--accent); }
+.opt-toggle.on { border-color: var(--accent); background: var(--accent); color: #fff; }
+
+/* 슬라이더 */
+.opt-slider-wrap { padding: 4px 0; }
+.opt-slider {
+  width: 100%; height: 5px; border-radius: 5px;
+  appearance: none; background: var(--border2); outline: none; cursor: pointer;
+}
+.opt-slider::-webkit-slider-thumb {
+  appearance: none; width: 18px; height: 18px; border-radius: 50%;
+  background: var(--accent); border: 2.5px solid #fff;
+  box-shadow: 0 1px 6px rgba(37,99,235,.3); cursor: pointer;
+}
+.opt-slider-labels { display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: var(--text3); }
+.opt-slider-val { text-align: center; font-family: var(--mono); font-size: 14px; font-weight: 600; color: var(--accent); margin-bottom: 8px; }
+
+/* 인풋 */
+.opt-input {
+  width: 100%; padding: 11px 14px;
+  background: var(--surface2); border: 1.5px solid var(--border);
+  border-radius: 9px; font-family: var(--sans); font-size: 14px;
+  color: var(--text); outline: none; transition: border-color .2s;
+}
+.opt-input:focus { border-color: var(--accent); }
+.opt-input::placeholder { color: var(--text3); }
+
+/* 푸터 */
+.config-footer {
+  padding: 16px 28px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-top: 1px solid var(--border);
+}
+
+.config-summary {
+  font-size: 13px; color: var(--text3); max-width: 280px; line-height: 1.5;
+}
+.config-summary strong { color: var(--text2); font-weight: 600; }
+
+.config-start-btn {
+  padding: 12px 28px;
+  background: var(--accent); border: none; border-radius: 11px;
+  font-family: var(--sans); font-size: 15px; font-weight: 700;
+  color: #fff; cursor: pointer; transition: opacity .2s, transform .1s;
+  display: flex; align-items: center; gap: 8px;
+}
+.config-start-btn:hover { opacity: .9; }
+.config-start-btn:active { transform: scale(.99); }
+
+/* ──────────────────────────────────
    SIMULATION OVERLAY
 ────────────────────────────────── */
 #sim-overlay {
@@ -901,7 +1060,7 @@ body {
 
       <div class="agent-grid">
 
-        <button class="agent-card" onclick="openChat('analysis')">
+        <button class="agent-card" onclick="openConfig('analysis')">
           <div class="card-top">
             <div class="card-icon">
               <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
@@ -919,7 +1078,7 @@ body {
           </div>
         </button>
 
-        <button class="agent-card" onclick="openChat('forecast')">
+        <button class="agent-card" onclick="openConfig('forecast')">
           <div class="card-top">
             <div class="card-icon">
               <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
@@ -936,7 +1095,7 @@ body {
           </div>
         </button>
 
-        <button class="agent-card" onclick="openChat('report')">
+        <button class="agent-card" onclick="openConfig('report')">
           <div class="card-top">
             <div class="card-icon">
               <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
@@ -955,7 +1114,7 @@ body {
           </div>
         </button>
 
-        <button class="agent-card" onclick="openChat('audit')">
+        <button class="agent-card" onclick="openConfig('audit')">
           <div class="card-top">
             <div class="card-icon">
               <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
@@ -972,7 +1131,7 @@ body {
           </div>
         </button>
 
-        <button class="agent-card" onclick="openChat('share')">
+        <button class="agent-card" onclick="openConfig('share')">
           <div class="card-top">
             <div class="card-icon">
               <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
@@ -992,7 +1151,7 @@ body {
           </div>
         </button>
 
-        <button class="agent-card" onclick="openChat('manual')">
+        <button class="agent-card" onclick="openConfig('manual')">
           <div class="card-top">
             <div class="card-icon">
               <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
@@ -1080,6 +1239,39 @@ body {
   </div>  <!-- end .main -->
   </div>  <!-- end .app-body -->
 </div>    <!-- end #app -->
+
+<!-- ════ AGENT CONFIG MODAL ════ -->
+<div id="config-overlay" onclick="handleConfigOverlayClick(event)">
+  <div class="config-panel" id="config-panel">
+    <div class="config-header">
+      <div>
+        <div class="config-agent-tag">
+          <div class="config-agent-icon" id="config-icon"></div>
+          <span class="config-badge" id="config-badge"></span>
+        </div>
+        <div class="config-title" id="config-title"></div>
+        <div class="config-desc"  id="config-desc"></div>
+      </div>
+      <button class="config-close" onclick="closeConfig()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <line x1="1" y1="1" x2="13" y2="13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="13" y1="1" x2="1" y2="13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+    <div class="config-body" id="config-body"></div>
+    <div class="config-footer">
+      <div class="config-summary" id="config-summary"></div>
+      <button class="config-start-btn" id="config-start-btn" onclick="startWithConfig()">
+        시작하기
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <line x1="2" y1="7" x2="12" y2="7" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+          <polyline points="8,3 12,7 8,11" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
 
 <!-- SIMULATION OVERLAY -->
 <div id="sim-overlay">
@@ -1487,9 +1679,372 @@ function fillStats() {
 }
 
 // ══════════════════════════════════
+//  AGENT CONFIG MODAL
+// ══════════════════════════════════
+
+// 각 에이전트별 옵션 정의
+const AGENT_CONFIG = {
+  analysis: {
+    icon: `<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="12" width="3.5" height="5" rx="1" fill="var(--accent)" opacity=".5"/><rect x="8" y="7" width="3.5" height="10" rx="1" fill="var(--accent)" opacity=".75"/><rect x="14" y="2" width="3.5" height="15" rx="1" fill="var(--accent)"/></svg>`,
+    sections: [
+      {
+        id: 'scope', label: '분석 범위', type: 'radio',
+        options: [
+          { id: 'all',    name: '전체 브랜치',   sub: '30개 브랜치 종합 분석', badge: null },
+          { id: 'region', name: '지역별 분석',   sub: '서울·경기·부산 등 권역 단위', badge: null },
+          { id: 'risk',   name: '위험 브랜치만', sub: '위험·주의 브랜치 8개 집중 분석', badge: { text: '8개', type: 'danger' } },
+        ],
+        default: 'all',
+      },
+      {
+        id: 'metric', label: '중점 지표', type: 'toggle',
+        options: [
+          { id: 'balance',  name: '잔액 현황' },
+          { id: 'cashflow', name: '현금흐름' },
+          { id: 'reserve',  name: '예비자금 비율' },
+          { id: 'target',   name: '목표 달성률' },
+          { id: 'trend',    name: '전월 대비 추이' },
+        ],
+        default: ['balance', 'cashflow'],
+      },
+      {
+        id: 'period', label: '기준 기간', type: 'radio',
+        options: [
+          { id: 'month',   name: '이번 달 (3월)', sub: '2025년 3월 기준 최신 데이터', badge: { text: '최신', type: 'success' } },
+          { id: 'quarter', name: '최근 분기',     sub: '2025년 1~3월 3개월 비교', badge: null },
+          { id: 'half',    name: '최근 반기',     sub: '2024년 10월 ~ 2025년 3월', badge: null },
+        ],
+        default: 'month',
+      },
+    ],
+  },
+
+  forecast: {
+    icon: `<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><polyline points="2,16 6,10 10,12 15,5 19,7" stroke="var(--accent)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><polyline points="15,5 19,5 19,9" stroke="var(--accent)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    sections: [
+      {
+        id: 'horizon', label: '예측 기간', type: 'radio',
+        options: [
+          { id: '1', name: '1개월 단기', sub: '4월 예측 + 즉각 대응 필요 항목', badge: { text: '정확도 94%', type: 'success' } },
+          { id: '3', name: '3개월 분기', sub: '2분기 예측 + 시나리오 3종',        badge: { text: '정확도 87%', type: 'warn' } },
+          { id: '6', name: '6개월 반기', sub: '하반기 추세 + 리스크 로드맵',      badge: { text: '정확도 79%', type: 'warn' } },
+        ],
+        default: '1',
+      },
+      {
+        id: 'scenario', label: '시나리오 설정', type: 'radio',
+        options: [
+          { id: 'base',       name: '기본 시나리오',   sub: '현재 추세 유지 가정', badge: null },
+          { id: 'optimistic', name: '낙관 시나리오',   sub: '성장률 +3% 가정',    badge: { text: '낙관', type: 'success' } },
+          { id: 'pessimistic',name: '비관 시나리오',   sub: '경기 침체 -5% 가정', badge: { text: '비관', type: 'danger' } },
+          { id: 'all3',       name: '3가지 비교',      sub: '낙관·기본·비관 동시 제시', badge: null },
+        ],
+        default: 'base',
+      },
+      {
+        id: 'focus', label: '집중 분석 대상', type: 'toggle',
+        options: [
+          { id: 'risk_branch', name: '위험 브랜치' },
+          { id: 'top_branch',  name: '성장 브랜치' },
+          { id: 'cashflow',    name: '현금흐름' },
+          { id: 'reserve',     name: '예비자금' },
+        ],
+        default: ['risk_branch'],
+      },
+    ],
+  },
+
+  report: {
+    icon: `<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="2" width="14" height="16" rx="2.5" stroke="var(--accent)" stroke-width="1.8"/><line x1="7" y1="7" x2="13" y2="7" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/><line x1="7" y1="10.5" x2="13" y2="10.5" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/><line x1="7" y1="14" x2="10" y2="14" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+    sections: [
+      {
+        id: 'template', label: '보고서 유형', type: 'radio',
+        options: [
+          { id: 'exec',   name: '임원 요약 보고서', sub: '1페이지 핵심 KPI + 리스크 요약', badge: { text: '추천', type: 'success' } },
+          { id: 'full',   name: '전체 현황 보고서', sub: '30개 브랜치 지역별 완전 분석', badge: null },
+          { id: 'risk',   name: '이상 집중 보고서', sub: '위험·주의 브랜치 + 이상거래 집중', badge: { text: '긴급', type: 'danger' } },
+          { id: 'monthly',name: '월간 정기 보고서', sub: '전월 비교 + 목표 달성률 포함', badge: null },
+        ],
+        default: 'exec',
+      },
+      {
+        id: 'audience', label: '보고 대상', type: 'radio',
+        options: [
+          { id: 'ceo',   name: 'CEO / 임원진', sub: '의사결정 중심, 수치 요약 위주', badge: null },
+          { id: 'team',  name: '팀장 / 실무자', sub: '상세 데이터 + 원인 분석 포함', badge: null },
+          { id: 'audit', name: '감사·컴플라이언스', sub: '이상거래·위험도 중심 서술', badge: null },
+        ],
+        default: 'ceo',
+      },
+      {
+        id: 'include', label: '포함 항목', type: 'toggle',
+        options: [
+          { id: 'chart',    name: '수치 표' },
+          { id: 'trend',    name: '추이 분석' },
+          { id: 'risk',     name: '리스크 목록' },
+          { id: 'action',   name: '조치 권고안' },
+          { id: 'forecast', name: '다음달 전망' },
+        ],
+        default: ['chart', 'risk', 'action'],
+      },
+    ],
+  },
+
+  audit: {
+    icon: `<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6" stroke="var(--accent)" stroke-width="1.8"/><line x1="13.5" y1="13.5" x2="18" y2="18" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round"/></svg>`,
+    sections: [
+      {
+        id: 'mode', label: '감사 모드', type: 'radio',
+        options: [
+          { id: 'anomaly',    name: '이상거래 탐지',   sub: '현재 감지된 3건 + 패턴 분석', badge: { text: '3건 대기', type: 'danger' } },
+          { id: 'compliance', name: '컴플라이언스 검토', sub: 'AML·예비자금 기준 준수 여부',  badge: null },
+          { id: 'branch',     name: '브랜치 감사',     sub: '특정 브랜치 전체 거래 검토',   badge: null },
+          { id: 'full',       name: '전체 감사',       sub: '이상거래 + 컴플라이언스 종합',  badge: null },
+        ],
+        default: 'anomaly',
+      },
+      {
+        id: 'risk_level', label: '위험도 필터', type: 'toggle',
+        options: [
+          { id: 'HIGH', name: 'HIGH 위험' },
+          { id: 'MED',  name: 'MED 주의' },
+          { id: 'LOW',  name: 'LOW 관찰' },
+        ],
+        default: ['HIGH', 'MED'],
+      },
+      {
+        id: 'action', label: '요청 사항', type: 'radio',
+        options: [
+          { id: 'report',  name: '현황 보고',   sub: '이상 내역 정리 및 설명', badge: null },
+          { id: 'suggest', name: '조치 권고',   sub: '각 건별 즉각 조치 방안 제시', badge: null },
+          { id: 'priority',name: '우선순위 결정', sub: '위험도 순 처리 순서 결정', badge: null },
+        ],
+        default: 'report',
+      },
+    ],
+  },
+
+  share: {
+    icon: `<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="16" cy="4" r="2.5" stroke="var(--accent)" stroke-width="1.8"/><circle cx="4" cy="10" r="2.5" stroke="var(--accent)" stroke-width="1.8"/><circle cx="16" cy="16" r="2.5" stroke="var(--accent)" stroke-width="1.8"/><line x1="6.3" y1="9" x2="13.7" y2="5.2" stroke="var(--accent)" stroke-width="1.5"/><line x1="6.3" y1="11" x2="13.7" y2="14.8" stroke="var(--accent)" stroke-width="1.5"/></svg>`,
+    sections: [
+      {
+        id: 'content', label: '공유할 내용', type: 'radio',
+        options: [
+          { id: 'latest',  name: '최신 보고서',    sub: '가장 최근 생성된 보고서', badge: { text: '추천', type: 'success' } },
+          { id: 'analysis',name: '자금분석 결과',  sub: '브랜치 현황 분석 내용', badge: null },
+          { id: 'alert',   name: '이상거래 알림',  sub: '3건 이상거래 긴급 공유', badge: { text: '긴급', type: 'danger' } },
+          { id: 'custom',  name: '직접 내용 작성', sub: '공유할 내용을 직접 입력', badge: null },
+        ],
+        default: 'latest',
+      },
+      {
+        id: 'permission', label: '공유 권한', type: 'radio',
+        options: [
+          { id: 'view',  name: '조회만',     sub: '읽기 전용 — 수정 불가', badge: null },
+          { id: 'comment',name: '댓글 가능', sub: '조회 + 댓글 작성 가능', badge: null },
+          { id: 'edit',  name: '편집 가능',  sub: '조회 + 수정 + 공유 가능', badge: { text: '주의', type: 'warn' } },
+        ],
+        default: 'view',
+      },
+      {
+        id: 'channel', label: '공유 채널', type: 'toggle',
+        options: [
+          { id: 'link',  name: '링크 복사' },
+          { id: 'email', name: '이메일' },
+          { id: 'slack', name: 'Slack' },
+          { id: 'teams', name: 'Teams' },
+        ],
+        default: ['link'],
+      },
+    ],
+  },
+
+  manual: {
+    icon: `<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="2" width="10" height="16" rx="2" stroke="var(--accent)" stroke-width="1.8"/><line x1="6" y1="2" x2="6" y2="18" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round"/><path d="M13 6 C16 6 18 7.5 18 10 C18 12.5 16 14 13 14" stroke="var(--accent)" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>`,
+    sections: [
+      {
+        id: 'topic', label: '알고 싶은 기능', type: 'radio',
+        options: [
+          { id: 'fund_input', name: '자금 입력 방법',    sub: '입출금 데이터 입력 단계별 안내', badge: null },
+          { id: 'report_gen', name: '보고서 생성',       sub: '보고서 만들고 공유하는 방법',   badge: { text: '인기', type: 'success' } },
+          { id: 'anomaly',    name: '이상거래 신고',     sub: '이상 감지 시 처리 절차',        badge: null },
+          { id: 'permission', name: '권한·접근 설정',   sub: '브랜치별 담당자 권한 관리',      badge: null },
+          { id: 'agent',      name: 'AI 에이전트 활용법', sub: '각 에이전트 효과적으로 쓰는 법', badge: null },
+        ],
+        default: 'fund_input',
+      },
+      {
+        id: 'level', label: '사용 경험', type: 'radio',
+        options: [
+          { id: 'beginner',     name: '처음 사용',   sub: '처음부터 천천히 단계별 안내', badge: null },
+          { id: 'intermediate', name: '기본 숙지',   sub: '핵심 내용만 빠르게 요약',    badge: null },
+          { id: 'advanced',     name: '고급 사용자', sub: '단축키·고급 기능 중심',       badge: null },
+        ],
+        default: 'beginner',
+      },
+    ],
+  },
+};
+
+// 현재 선택 상태
+let configState = {};    // { sectionId: selectedValue }
+let configAgentId = null;
+
+function openConfig(agentId) {
+  configAgentId = agentId;
+  const ag   = AGENTS[agentId];
+  const conf = AGENT_CONFIG[agentId];
+
+  // 상태 초기화
+  configState = {};
+  conf.sections.forEach(s => {
+    configState[s.id] = s.type === 'toggle' ? [...s.default] : s.default;
+  });
+
+  // 헤더 채우기
+  document.getElementById('config-icon').innerHTML  = conf.icon;
+  document.getElementById('config-badge').textContent = agentId.toUpperCase();
+  document.getElementById('config-title').textContent = ag.name;
+  document.getElementById('config-desc').textContent  = ag.desc;
+
+  // 본문 렌더
+  renderConfigBody(conf);
+  updateConfigSummary();
+
+  document.getElementById('config-overlay').classList.add('on');
+}
+
+function closeConfig() {
+  document.getElementById('config-overlay').classList.remove('on');
+}
+
+function handleConfigOverlayClick(e) {
+  if (e.target === document.getElementById('config-overlay')) closeConfig();
+}
+
+function renderConfigBody(conf) {
+  const body = document.getElementById('config-body');
+  body.innerHTML = conf.sections.map(s => {
+    if (s.type === 'radio')  return renderRadioSection(s);
+    if (s.type === 'toggle') return renderToggleSection(s);
+    return '';
+  }).join('');
+}
+
+function renderRadioSection(s) {
+  const opts = s.options.map(o => {
+    const badge = o.badge ? `<span class="opt-radio-badge ${o.badge.type}">${o.badge.text}</span>` : '';
+    const sel   = configState[s.id] === o.id;
+    return `
+      <div class="opt-radio ${sel ? 'selected' : ''}"
+           onclick="selectRadio('${s.id}','${o.id}')">
+        <div class="opt-radio-dot"></div>
+        <div class="opt-radio-info">
+          <div class="opt-radio-name">${o.name}</div>
+          <div class="opt-radio-sub">${o.sub}</div>
+        </div>
+        ${badge}
+      </div>`;
+  }).join('');
+  return `<div class="opt-section">
+    <div class="opt-label">${s.label}</div>
+    <div class="opt-radio-group">${opts}</div>
+  </div>`;
+}
+
+function renderToggleSection(s) {
+  const opts = s.options.map(o => {
+    const on = configState[s.id].includes(o.id);
+    return `<button class="opt-toggle ${on ? 'on' : ''}"
+      onclick="toggleOption('${s.id}','${o.id}')">${o.name}</button>`;
+  }).join('');
+  return `<div class="opt-section">
+    <div class="opt-label">${s.label}</div>
+    <div class="opt-toggle-group">${opts}</div>
+  </div>`;
+}
+
+function selectRadio(sectionId, optionId) {
+  configState[sectionId] = optionId;
+  const conf = AGENT_CONFIG[configAgentId];
+  renderConfigBody(conf);
+  updateConfigSummary();
+}
+
+function toggleOption(sectionId, optionId) {
+  const arr = configState[sectionId];
+  const idx = arr.indexOf(optionId);
+  if (idx >= 0) {
+    if (arr.length > 1) arr.splice(idx, 1); // 최소 1개 유지
+  } else {
+    arr.push(optionId);
+  }
+  const conf = AGENT_CONFIG[configAgentId];
+  renderConfigBody(conf);
+  updateConfigSummary();
+}
+
+function updateConfigSummary() {
+  const conf = AGENT_CONFIG[configAgentId];
+  const ag   = AGENTS[configAgentId];
+  const parts = [];
+
+  conf.sections.forEach(s => {
+    const val = configState[s.id];
+    if (s.type === 'radio') {
+      const opt = s.options.find(o => o.id === val);
+      if (opt) parts.push(opt.name);
+    } else if (s.type === 'toggle') {
+      const names = s.options.filter(o => val.includes(o.id)).map(o => o.name);
+      if (names.length) parts.push(names.join('·'));
+    }
+  });
+
+  document.getElementById('config-summary').innerHTML =
+    `<strong>${ag.name}</strong><br>${parts.join(' / ')}`;
+}
+
+function startWithConfig() {
+  closeConfig();
+
+  const conf = AGENT_CONFIG[configAgentId];
+  const ag   = AGENTS[configAgentId];
+
+  // 선택 옵션 → 첫 질문 프롬프트 자동 생성
+  const promptParts = [];
+  conf.sections.forEach(s => {
+    const val = configState[s.id];
+    if (s.type === 'radio') {
+      const opt = s.options.find(o => o.id === val);
+      if (opt) promptParts.push(opt.name);
+    } else if (s.type === 'toggle') {
+      const names = s.options.filter(o => val.includes(o.id)).map(o => o.name);
+      if (names.length) promptParts.push(names.join(', ') + ' 포함');
+    }
+  });
+
+  // 에이전트별 자동 첫 질문 구성
+  const autoPrompts = {
+    analysis: `${promptParts.join(' / ')} 기준으로 자금 현황을 분석해줘.`,
+    forecast: `${promptParts.join(' / ')} 기준으로 자금 흐름을 예측해줘.`,
+    report:   `${promptParts.join(' / ')} 보고서를 작성해줘.`,
+    audit:    `${promptParts.join(' / ')} 기준으로 감사를 진행해줘.`,
+    share:    `${promptParts.join(' / ')} 방식으로 공유 방법을 안내해줘.`,
+    manual:   `${promptParts.join(' / ')} 에 대해 안내해줘.`,
+  };
+
+  // 예측 에이전트 기간 상태 sync
+  if (configAgentId === 'forecast') {
+    selectedPeriod = configState['horizon'] || '1';
+  }
+
+  openChat(configAgentId, autoPrompts[configAgentId]);
+}
+
+// ══════════════════════════════════
 //  NAVIGATION
 // ══════════════════════════════════
-function openChat(id) {
+function openChat(id, autoPrompt) {
   curAgent = id; history = [];
 
   // 새 대화 생성
@@ -1514,6 +2069,11 @@ function openChat(id) {
   renderToolbar(id);
   renderSidebar();
   document.getElementById('chat-input').focus();
+
+  // 설정 모달에서 자동 생성된 첫 질문이 있으면 바로 전송
+  if (autoPrompt) {
+    setTimeout(() => send(autoPrompt), 200);
+  }
 }
 
 function goBack() {
